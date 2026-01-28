@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARIZONA 2027 — Tu survis ?</title>
+    <meta name="description" content="Simule ta situation après les réformes Arizona. Basé sur les vrais chiffres, les vraies règles, les vrais pièges.">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;800&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --black: #0a0a0a;
+            --white: #f0f0f0;
+            --red: #ff2d2d;
+            --green: #00ff66;
+            --yellow: #ffcc00;
+            --grey: #333;
+            --grey-light: #666;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--black);
+            color: var(--white);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        
+        /* Glitch effect */
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+        
+        .glitch:hover {
+            animation: glitch 0.3s infinite;
+        }
+        
+        /* Scanlines */
+        .scanlines::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.15),
+                rgba(0, 0, 0, 0.15) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            z-index: 9999;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+        
+        /* Header */
+        .header {
+            padding: 2rem 0;
+            border-bottom: 1px solid var(--grey);
+            margin-bottom: 2rem;
+        }
+        
+        .header h1 {
+            font-size: clamp(2rem, 6vw, 4rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1;
+        }
+        
+        .header h1 .red { color: var(--red); }
+        
+        .header .tagline {
+            margin-top: 1rem;
+            color: var(--grey-light);
+            font-size: 1.1rem;
+        }
+        
+        /* Navigation tabs */
+        .tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 1px solid var(--grey);
+            margin-bottom: 2rem;
+            overflow-x: auto;
+        }
+        
+        .tab {
+            padding: 1rem 1.5rem;
+            background: transparent;
+            border: none;
+            color: var(--grey-light);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        
+        .tab:hover {
+            color: var(--white);
+        }
+        
+        .tab.active {
+            color: var(--red);
+            border-bottom-color: var(--red);
+        }
+        
+        /* Simulator */
+        .simulator {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        
+        @media (max-width: 800px) {
+            .simulator { grid-template-columns: 1fr; }
+        }
+        
+        .panel {
+            background: var(--grey);
+            background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+            border: 1px solid #2a2a2a;
+            padding: 1.5rem;
+        }
+        
+        .panel-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--grey-light);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--grey);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--white);
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            background: var(--black);
+            border: 1px solid var(--grey);
+            color: var(--white);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1rem;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--red);
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 0.8rem;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--red);
+        }
+        
+        .checkbox-group label {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        
+        /* Results */
+        .result-box {
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--grey);
+        }
+        
+        .result-box.danger {
+            border-left-color: var(--red);
+            background: rgba(255, 45, 45, 0.1);
+        }
+        
+        .result-box.warning {
+            border-left-color: var(--yellow);
+            background: rgba(255, 204, 0, 0.1);
+        }
+        
+        .result-box.ok {
+            border-left-color: var(--green);
+            background: rgba(0, 255, 102, 0.1);
+        }
+        
+        .result-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+        
+        .result-number.negative { color: var(--red); }
+        .result-number.positive { color: var(--green); }
+        
+        .result-label {
+            margin-top: 0.5rem;
+            color: var(--grey-light);
+            font-size: 0.9rem;
+        }
+        
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 2rem;
+        }
+        
+        .timeline::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--grey);
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding-bottom: 2rem;
+        }
+        
+        .timeline-item::before {
+            content: "";
+            position: absolute;
+            left: -2rem;
+            top: 0.5rem;
+            width: 12px;
+            height: 12px;
+            background: var(--red);
+            border-radius: 50%;
+            transform: translateX(-5px);
+        }
+        
+        .timeline-date {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--red);
+            margin-bottom: 0.3rem;
+        }
+        
+        .timeline-title {
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+        
+        .timeline-desc {
+            color: var(--grey-light);
+            font-size: 0.9rem;
+        }
+        
+        /* Stats grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+            border: 1px solid #2a2a2a;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .stat-card .number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--red);
+        }
+        
+        .stat-card .label {
+            margin-top: 0.5rem;
+            color: var(--grey-light);
+            font-size: 0.85rem;
+        }
+        
+        .stat-card .source {
+            margin-top: 0.3rem;
+            color: var(--grey);
+            font-size: 0.7rem;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        /* Quotes */
+        .quote-block {
+            border-left: 4px solid var(--red);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            background: rgba(255, 45, 45, 0.05);
+        }
+        
+        .quote-text {
+            font-size: 1.1rem;
+            font-style: italic;
+            margin-bottom: 0.5rem;
+        }
+        
+        .quote-source {
+            color: var(--grey-light);
+            font-size: 0.85rem;
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: var(--red);
+            color: var(--white);
+            border: none;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.2s;
+        }
+        
+        .btn:hover {
+            background: var(--white);
+            color: var(--black);
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--red);
+            color: var(--red);
+        }
+        
+        .btn-outline:hover {
+            background: var(--red);
+            color: var(--white);
+        }
+        
+        /* Action cards */
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .action-card {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+            border: 1px solid #2a2a2a;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+        
+        .action-card:hover {
+            border-color: var(--red);
+        }
+        
+        .action-card h3 {
+            color: var(--red);
+            margin-bottom: 0.5rem;
+        }
+        
+        .action-card p {
+            color: var(--grey-light);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Comparison table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+        
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--grey);
+        }
+        
+        .comparison-table th {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--grey-light);
+        }
+        
+        .comparison-table .deborsu {
+            color: var(--red);
+        }
+        
+        .comparison-table .realite {
+            color: var(--green);
+        }
+        
+        /* Footer */
+        .footer {
+            margin-top: 4rem;
+            padding: 2rem 0;
+            border-top: 1px solid var(--grey);
+            text-align: center;
+            color: var(--grey-light);
+            font-size: 0.85rem;
+        }
+        
+        .footer a {
+            color: var(--red);
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        
+        /* Counter animation */
+        .counter {
+            display: inline-block;
+        }
+        
+        /* Warning banner */
+        .warning-banner {
+            background: var(--red);
+            color: var(--white);
+            padding: 0.8rem;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+        }
+        
+        .warning-banner strong {
+            text-transform: uppercase;
+        }
+        
+        /* Live counter */
+        .live-counter {
+            background: linear-gradient(135deg, #1a0000 0%, #0d0d0d 100%);
+            border: 1px solid var(--red);
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .live-counter .label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--grey-light);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+        
+        .live-counter .number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--red);
+        }
+        
+        .live-counter .sub {
+            color: var(--grey-light);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        
+        .blink {
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0.3; }
+        }
+    </style>
+</head>
+<body class="scanlines">
+    <div id="root"></div>
+    
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+        
+        // DONNÉES RÉELLES
+        const DATA = {
+            // Réformes Arizona - chiffres officiels/estimations
+            arizona: {
+                exclusions_prevues: 90000,
+                limite_mois: 24,
+                transfert_cpas_prevu: 750, // €/mois/personne
+                cout_reel_cpas: 1250, // €/mois/personne (estimation basse)
+                date_application: "2026-01-01",
+                date_premieres_exclusions: "2028-01-01"
+            },
+            
+            // Documentaire Deborsu
+            deborsu: {
+                date_diffusion: "2025-11-07",
+                audience: 410860,
+                part_marche: 39.1,
+                duree_minutes: 37,
+                plaintes_csa: 400,
+                titre: "Sans boulot : tous fraudeurs ?"
+            },
+            
+            // Chiffres réels sécurité sociale
+            secu: {
+                malades_longue_duree: 500000,
+                taux_fraude_estime: 0.03, // 3%
+                chomeurs_wallonie: 180000,
+                beneficiaires_cpas: 165000,
+                cout_invalidite_annuel: 9000000000, // 9 milliards
+                ris_isole: 1263.17, // RIS isolé 2025
+                ris_cohabitant: 842.11,
+                ris_famille: 1707.11
+            },
+            
+            // Seuils et pièges à l'emploi
+            pieges: {
+                seuil_bim: 24403, // Revenu annuel max pour BIM
+                perte_bim_mensuelle: 50, // Estimation économie mensuelle
+                perte_tarif_social_energie: 60,
+                perte_tarif_social_transport: 40,
+                majoration_alloc_familiales: 80
+            },
+            
+            // Timeline des événements
+            timeline: [
+                { date: "2024-06-09", titre: "Élections fédérales", desc: "Victoire N-VA, négociations Arizona" },
+                { date: "2025-02-01", titre: "Accord Arizona", desc: "Annonce de la limitation du chômage à 24 mois" },
+                { date: "2025-10-15", titre: "Vote réformes", desc: "Adoption des premières mesures au Parlement" },
+                { date: "2025-11-07", titre: "Documentaire Deborsu", desc: "Diffusion 'Sans boulot : tous fraudeurs ?' — 410.860 téléspectateurs" },
+                { date: "2025-11-12", titre: "Plaintes CSA", desc: "400+ plaintes déposées, instruction ouverte" },
+                { date: "2026-01-01", titre: "Arizona Phase 1", desc: "Entrée en vigueur des premiers durcissements" },
+                { date: "2027-01-01", titre: "Limitation active", desc: "Début du compteur 24 mois pour les nouveaux chômeurs" },
+                { date: "2028-01-01", titre: "Premières exclusions", desc: "Estimation : 30.000 exclusions la première année" }
+            ],
+            
+            // Comparaison Deborsu vs Réalité
+            comparaisons: [
+                { 
+                    sujet: "Taux de fraude",
+                    deborsu: "Impression de fraude généralisée",
+                    realite: "< 3% selon les études officielles",
+                    source: "SPF Sécurité sociale"
+                },
+                {
+                    sujet: "Laetitia (2600€/mois)",
+                    deborsu: "\"Profite du système\"",
+                    realite: "2600€ pour 4 personnes = 650€/pers, inclut allocations familiales",
+                    source: "Témoignage post-diffusion"
+                },
+                {
+                    sujet: "Gaëlle Denys (CPAS Verviers)",
+                    deborsu: "Quelques phrases isolées",
+                    realite: "1h d'interview tronquée, message déformé",
+                    source: "Déclaration Facebook 09/11/2025"
+                },
+                {
+                    sujet: "Malades longue durée",
+                    deborsu: "Cas extrêmes présentés comme typiques",
+                    realite: "63% ont +50 ans, 59% femmes, 1/3 troubles psy",
+                    source: "INAMI 2025"
+                },
+                {
+                    sujet: "Causes du chômage",
+                    deborsu: "\"Problème de mentalité\"",
+                    realite: "Pièges à l'emploi, discrimination, restructurations",
+                    source: "Études BNB, ONEM"
+                }
+            ],
+            
+            // Témoignages réels
+            temoignages: [
+                {
+                    nom: "Gaëlle Denys",
+                    fonction: "Présidente CPAS Verviers",
+                    texte: "L'interview que j'ai accordée a duré plus d'une heure. Seules quelques phrases ont été isolées et sorties de leur contexte, donnant une image fausse et inacceptable de mon message.",
+                    date: "09/11/2025",
+                    source: "Facebook"
+                },
+                {
+                    nom: "Laetitia",
+                    fonction: "Intervenante du documentaire",
+                    texte: "Je suis frustrée du résultat final. L'image qu'ils ont donnée de moi est fausse. Je ne suis pas une profiteuse.",
+                    date: "10/11/2025",
+                    source: "Témoignage presse"
+                }
+            ]
+        };
+        
+        // Composant compteur animé
+        function AnimatedCounter({ end, duration = 2000, prefix = "", suffix = "" }) {
+            const [count, setCount] = useState(0);
+            const countRef = useRef(null);
+            
+            useEffect(() => {
+                const observer = new IntersectionObserver(
+                    (entries) => {
+                        if (entries[0].isIntersecting) {
+                            let start = 0;
+                            const step = end / (duration / 16);
+                            const timer = setInterval(() => {
+                                start += step;
+                                if (start >= end) {
+                                    setCount(end);
+                                    clearInterval(timer);
+                                } else {
+                                    setCount(Math.floor(start));
+                                }
+                            }, 16);
+                            observer.disconnect();
+                        }
+                    },
+                    { threshold: 0.5 }
+                );
+                
+                if (countRef.current) observer.observe(countRef.current);
+                return () => observer.disconnect();
+            }, [end, duration]);
+            
+            return (
+                <span ref={countRef} className="counter">
+                    {prefix}{count.toLocaleString('fr-BE')}{suffix}
+                </span>
+            );
+        }
+        
+        // Compteur en temps réel (simulation basée sur projections)
+        function LiveExclusionCounter() {
+            const [count, setCount] = useState(0);
+            
+            useEffect(() => {
+                // Calcul basé sur: 90000 exclusions prévues sur 3 ans (2028-2030)
+                // = ~30000/an = ~82/jour = ~3.4/heure
+                const startDate = new Date('2028-01-01');
+                const now = new Date();
+                
+                if (now < startDate) {
+                    // Avant 2028: compte à rebours
+                    const timer = setInterval(() => {
+                        const diff = startDate - new Date();
+                        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                        setCount(days);
+                    }, 1000);
+                    return () => clearInterval(timer);
+                } else {
+                    // Après 2028: simulation des exclusions
+                    const daysSinceStart = Math.floor((now - startDate) / (1000 * 60 * 60 * 24));
+                    const baseExclusions = daysSinceStart * 82;
+                    
+                    const timer = setInterval(() => {
+                        const hourFraction = (new Date().getHours() * 60 + new Date().getMinutes()) / (24 * 60);
+                        setCount(Math.floor(baseExclusions + (hourFraction * 82)));
+                    }, 60000);
+                    return () => clearInterval(timer);
+                }
+            }, []);
+            
+            const now = new Date();
+            const startDate = new Date('2028-01-01');
+            const isBeforeStart = now < startDate;
+            
+            return (
+                <div className="live-counter">
+                    <div className="label">
+                        {isBeforeStart ? "Jours avant les premières exclusions Arizona" : "Personnes exclues depuis le 01/01/2028"}
+                    </div>
+                    <div className="number">
+                        <span className="blink">●</span> {count.toLocaleString('fr-BE')}
+                    </div>
+                    <div className="sub">
+                        {isBeforeStart 
+                            ? "Projection: 90.000 exclusions d'ici 2030" 
+                            : "~82 exclusions/jour (projection)"
+                        }
+                    </div>
+                </div>
+            );
+        }
+        
+        // Simulateur "Tu survis à Arizona?"
+        function Simulator() {
+            const [formData, setFormData] = useState({
+                statut: 'chomeur',
+                duree_mois: 12,
+                age: 35,
+                revenus_menage: 0,
+                enfants: 0,
+                cohabitant: false,
+                bim: true,
+                logement_social: false,
+                tarif_social_energie: true
+            });
+            
+            const [result, setResult] = useState(null);
+            
+            const calculate = () => {
+                let situationActuelle = 0;
+                let situationArizona = 0;
+                let pertes = [];
+                let statut = 'ok';
+                
+                // Calcul situation actuelle
+                if (formData.statut === 'chomeur') {
+                    // Allocation chômage moyenne
+                    situationActuelle = formData.cohabitant ? 1100 : 1400;
+                } else if (formData.statut === 'cpas') {
+                    situationActuelle = formData.cohabitant 
+                        ? DATA.secu.ris_cohabitant 
+                        : (formData.enfants > 0 ? DATA.secu.ris_famille : DATA.secu.ris_isole);
+                } else if (formData.statut === 'mutuelle') {
+                    situationActuelle = formData.cohabitant ? 1000 : 1300;
+                }
+                
+                // Ajouts
+                if (formData.bim) situationActuelle += DATA.pieges.perte_bim_mensuelle;
+                if (formData.tarif_social_energie) situationActuelle += DATA.pieges.perte_tarif_social_energie;
+                if (formData.enfants > 0) situationActuelle += formData.enfants * 150; // Alloc familiales base
+                
+                // Calcul situation Arizona
+                situationArizona = situationActuelle;
+                
+                if (formData.statut === 'chomeur' && formData.duree_mois >= 24) {
+                    // Exclusion du chômage -> CPAS
+                    const nouveauMontant = formData.cohabitant 
+                        ? DATA.secu.ris_cohabitant 
+                        : (formData.enfants > 0 ? DATA.secu.ris_famille : DATA.secu.ris_isole);
+                    
+                    const perte = situationActuelle - nouveauMontant;
+                    situationArizona = nouveauMontant;
+                    
+                    pertes.push({
+                        label: "Passage chômage → CPAS",
+                        montant: -perte,
+                        detail: "Après 24 mois, fin des allocations fédérales"
+                    });
+                    
+                    statut = 'danger';
+                }
+                
+                // Pièges à l'emploi si reprise
+                if (formData.statut !== 'emploi') {
+                    let pertesReprise = 0;
+                    if (formData.bim) {
+                        pertesReprise += DATA.pieges.perte_bim_mensuelle;
+                        pertes.push({
+                            label: "Perte BIM si reprise emploi",
+                            montant: -DATA.pieges.perte_bim_mensuelle,
+                            detail: "Seuil dépassé = remboursements santé réduits"
+                        });
+                    }
+                    if (formData.tarif_social_energie) {
+                        pertesReprise += DATA.pieges.perte_tarif_social_energie;
+                        pertes.push({
+                            label: "Perte tarif social énergie",
+                            montant: -DATA.pieges.perte_tarif_social_energie,
+                            detail: "Facture gaz/élec augmente"
+                        });
+                    }
+                    if (formData.logement_social) {
+                        pertes.push({
+                            label: "Hausse loyer social",
+                            montant: -150,
+                            detail: "Loyer indexé sur les nouveaux revenus"
+                        });
+                        pertesReprise += 150;
+                    }
+                }
+                
+                if (statut === 'ok' && pertes.length > 2) statut = 'warning';
+                
+                setResult({
+                    actuel: Math.round(situationActuelle),
+                    arizona: Math.round(situationArizona),
+                    difference: Math.round(situationArizona - situationActuelle),
+                    pertes,
+                    statut,
+                    exclusion: formData.statut === 'chomeur' && formData.duree_mois >= 24
+                });
+            };
+            
+            return (
+                <div className="simulator">
+                    <div className="panel">
+                        <div className="panel-title">// Ta situation</div>
+                        
+                        <div className="form-group">
+                            <label>Statut actuel</label>
+                            <select 
+                                value={formData.statut}
+                                onChange={e => setFormData({...formData, statut: e.target.value})}
+                            >
+                                <option value="chomeur">Chômeur·euse</option>
+                                <option value="cpas">Bénéficiaire CPAS (RIS)</option>
+                                <option value="mutuelle">Mutuelle / Invalidité</option>
+                                <option value="emploi">En emploi</option>
+                            </select>
+                        </div>
+                        
+                        {formData.statut === 'chomeur' && (
+                            <div className="form-group">
+                                <label>Durée au chômage (mois)</label>
+                                <input 
+                                    type="number" 
+                                    value={formData.duree_mois}
+                                    onChange={e => setFormData({...formData, duree_mois: parseInt(e.target.value) || 0})}
+                                    min="0"
+                                    max="120"
+                                />
+                                {formData.duree_mois >= 24 && (
+                                    <small style={{color: 'var(--red)', display: 'block', marginTop: '0.5rem'}}>
+                                        ⚠️ Arizona: exclusion après 24 mois
+                                    </small>
+                                )}
+                            </div>
+                        )}
+                        
+                        <div className="form-group">
+                            <label>Âge</label>
+                            <input 
+                                type="number" 
+                                value={formData.age}
+                                onChange={e => setFormData({...formData, age: parseInt(e.target.value) || 0})}
+                                min="18"
+                                max="67"
+                            />
+                        </div>
+                        
+                        <div className="form-group">
+                            <label>Enfants à charge</label>
+                            <input 
+                                type="number" 
+                                value={formData.enfants}
+                                onChange={e => setFormData({...formData, enfants: parseInt(e.target.value) || 0})}
+                                min="0"
+                                max="10"
+                            />
+                        </div>
+                        
+                        <div className="form-group">
+                            <div className="checkbox-group">
+                                <input 
+                                    type="checkbox" 
+                                    id="cohabitant"
+                                    checked={formData.cohabitant}
+                                    onChange={e => setFormData({...formData, cohabitant: e.target.checked})}
+                                />
+                                <label htmlFor="cohabitant">Cohabitant·e</label>
+                            </div>
+                            
+                            <div className="checkbox-group">
+                                <input 
+                                    type="checkbox" 
+                                    id="bim"
+                                    checked={formData.bim}
+                                    onChange={e => setFormData({...formData, bim: e.target.checked})}
+                                />
+                                <label htmlFor="bim">BIM (intervention majorée santé)</label>
+                            </div>
+                            
+                            <div className="checkbox-group">
+                                <input 
+                                    type="checkbox" 
+                                    id="logement_social"
+                                    checked={formData.logement_social}
+                                    onChange={e => setFormData({...formData, logement_social: e.target.checked})}
+                                />
+                                <label htmlFor="logement_social">Logement social</label>
+                            </div>
+                            
+                            <div className="checkbox-group">
+                                <input 
+                                    type="checkbox" 
+                                    id="tarif_social"
+                                    checked={formData.tarif_social_energie}
+                                    onChange={e => setFormData({...formData, tarif_social_energie: e.target.checked})}
+                                />
+                                <label htmlFor="tarif_social">Tarif social énergie</label>
+                            </div>
+                        </div>
+                        
+                        <button className="btn" onClick={calculate}>
+                            Calculer l'impact
+                        </button>
+                    </div>
+                    
+                    <div className="panel">
+                        <div className="panel-title">// Résultat</div>
+                        
+                        {result ? (
+                            <div className="fade-in">
+                                <div className={`result-box ${result.statut}`}>
+                                    <div className={`result-number ${result.difference < 0 ? 'negative' : 'positive'}`}>
+                                        {result.difference > 0 ? '+' : ''}{result.difference}€
+                                    </div>
+                                    <div className="result-label">
+                                        Impact mensuel Arizona
+                                    </div>
+                                </div>
+                                
+                                {result.exclusion && (
+                                    <div className="result-box danger">
+                                        <strong>⚠️ EXCLUSION</strong>
+                                        <p style={{marginTop: '0.5rem', color: 'var(--grey-light)'}}>
+                                            Après 24 mois de chômage, tu seras transféré·e au CPAS.
+                                            Le RIS est inférieur aux allocations de chômage.
+                                        </p>
+                                    </div>
+                                )}
+                                
+                                <div style={{marginTop: '1.5rem'}}>
+                                    <strong>Détail des impacts:</strong>
+                                    {result.pertes.map((p, i) => (
+                                        <div key={i} style={{
+                                            padding: '0.8rem 0',
+                                            borderBottom: '1px solid var(--grey)',
+                                            display: 'flex',
+                                            justifyContent: 'space-between',
+                                            alignItems: 'flex-start'
+                                        }}>
+                                            <div>
+                                                <div>{p.label}</div>
+                                                <div style={{fontSize: '0.8rem', color: 'var(--grey-light)'}}>{p.detail}</div>
+                                            </div>
+                                            <div className="mono" style={{color: 'var(--red)'}}>
+                                                {p.montant}€
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                                
+                                <div style={{marginTop: '1.5rem', padding: '1rem', background: 'var(--black)'}}>
+                                    <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem'}}>
+                                        <span>Situation actuelle:</span>
+                                        <span className="mono">{result.actuel}€/mois</span>
+                                    </div>
+                                    <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                        <span>Après Arizona:</span>
+                                        <span className="mono" style={{color: result.arizona < result.actuel ? 'var(--red)' : 'var(--green)'}}>
+                                            {result.arizona}€/mois
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div style={{color: 'var(--grey-light)', textAlign: 'center', padding: '2rem'}}>
+                                Configure ta situation et clique sur "Calculer"
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+        
+        // Page Décryptage Deborsu
+        function Decryptage() {
+            return (
+                <div>
+                    <div className="stats-grid">
+                        <div className="stat-card">
+                            <div className="number"><AnimatedCounter end={410860} /></div>
+                            <div className="label">Téléspectateurs</div>
+                            <div className="source">RTL-TVI, 07/11/2025</div>
+                        </div>
+                        <div className="stat-card">
+                            <div className="number"><AnimatedCounter end={400} suffix="+" /></div>
+                            <div className="label">Plaintes CSA</div>
+                            <div className="source">Communiqué CSA, 12/11/2025</div>
+                        </div>
+                        <div className="stat-card">
+                            <div className="number"><AnimatedCounter end={37} /></div>
+                            <div className="label">Minutes de biais</div>
+                            <div className="source">Durée du documentaire</div>
+                        </div>
+                        <div className="stat-card">
+                            <div className="number"><AnimatedCounter end={3} suffix="%" prefix="<" /></div>
+                            <div className="label">Fraude réelle</div>
+                            <div className="source">SPF Sécurité sociale</div>
+                        </div>
+                    </div>
+                    
+                    <h2 style={{marginBottom: '1rem'}}>Deborsu vs. Réalité</h2>
+                    
+                    <table className="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Sujet</th>
+                                <th className="deborsu">Deborsu dit</th>
+                                <th className="realite">La réalité</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {DATA.comparaisons.map((c, i) => (
+                                <tr key={i}>
+                                    <td><strong>{c.sujet}</strong></td>
+                                    <td className="deborsu">{c.deborsu}</td>
+                                    <td>
+                                        <span className="realite">{c.realite}</span>
+                                        <div style={{fontSize: '0.75rem', color: 'var(--grey-light)', marginTop: '0.3rem'}}>
+                                            Source: {c.source}
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    
+                    <h2 style={{margin: '2rem 0 1rem'}}>Témoignages des manipulé·es</h2>
+                    
+                    {DATA.temoignages.map((t, i) => (
+                        <div className="quote-block" key={i}>
+                            <div className="quote-text">"{t.texte}"</div>
+                            <div className="quote-source">
+                                — {t.nom}, {t.fonction} ({t.source}, {t.date})
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            );
+        }
+        
+        // Timeline
+        function Timeline() {
+            return (
+                <div>
+                    <LiveExclusionCounter />
+                    
+                    <h2 style={{marginBottom: '1.5rem'}}>Chronologie Deborsu → Arizona</h2>
+                    
+                    <div className="timeline">
+                        {DATA.timeline.map((item, i) => {
+                            const date = new Date(item.date);
+                            const isPast = date < new Date();
+                            const isDeborsu = item.date === "2025-11-07";
+                            
+                            return (
+                                <div 
+                                    className="timeline-item" 
+                                    key={i}
+                                    style={{opacity: isPast ? 1 : 0.6}}
+                                >
+                                    <div className="timeline-date" style={{
+                                        color: isDeborsu ? 'var(--yellow)' : 'var(--red)'
+                                    }}>
+                                        {date.toLocaleDateString('fr-BE', { 
+                                            day: 'numeric', 
+                                            month: 'long', 
+                                            year: 'numeric' 
+                                        })}
+                                    </div>
+                                    <div className="timeline-title">{item.titre}</div>
+                                    <div className="timeline-desc">{item.desc}</div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                    
+                    <div className="panel" style={{marginTop: '2rem'}}>
+                        <div className="panel-title">// Coïncidence ?</div>
+                        <p style={{marginBottom: '1rem'}}>
+                            Le documentaire est diffusé <strong>3 semaines</strong> après le vote des premières mesures Arizona 
+                            et <strong>7 semaines</strong> avant leur entrée en vigueur.
+                        </p>
+                        <p style={{color: 'var(--grey-light)'}}>
+                            Timing parfait pour préparer l'opinion à accepter 90.000 exclusions. 
+                            Pas besoin de complot — juste une convergence d'intérêts entre médias et politiques.
+                        </p>
+                    </div>
+                </div>
+            );
+        }
+        
+        // Page Action
+        function Action() {
+            const [plainte, setPlainte] = useState({
+                nom: '',
+                email: '',
+                motifs: []
+            });
+            
+            const motifsPossibles = [
+                "Violation de l'équilibre et de la neutralité",
+                "Atteinte à la dignité humaine",
+                "Incitation à la discrimination (origine sociale)",
+                "Manipulation de témoignages",
+                "Défaut de rigueur journalistique"
+            ];
+            
+            const generatePlainte = () => {
+                const text = `PLAINTE AUPRÈS DU CONSEIL SUPÉRIEUR DE L'AUDIOVISUEL
+
+Objet: Documentaire "Sans boulot : tous fraudeurs ?" diffusé le 07/11/2025 sur RTL-TVI
+
+Madame, Monsieur,
+
+Je soussigné·e ${plainte.nom || '[NOM]'}, souhaite porter plainte contre le documentaire susmentionné pour les motifs suivants:
+
+${plainte.motifs.map(m => `- ${m}`).join('\n')}
+
+Ce documentaire, en présentant une image biaisée et stigmatisante des bénéficiaires d'aides sociales, contribue à alimenter les préjugés et à préparer l'opinion publique à accepter des mesures punitives (réformes Arizona).
+
+Je demande au CSA d'examiner ce contenu au regard:
+- Du décret SMA-SPV sur les services de médias audiovisuels
+- Du Code de déontologie journalistique
+
+Veuillez agréer mes salutations distinguées.
+
+${plainte.nom || '[NOM]'}
+${plainte.email || '[EMAIL]'}
+Date: ${new Date().toLocaleDateString('fr-BE')}
+
+---
+Envoyez cette plainte à: plainte@csa.be
+`;
+                
+                const blob = new Blob([text], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'plainte-csa-deborsu.txt';
+                a.click();
+            };
+            
+            return (
+                <div>
+                    <div className="action-grid">
+                        <div className="action-card">
+                            <h3>📝 Porter plainte au CSA</h3>
+                            <p>Plus de 400 plaintes ont déjà été déposées. Chaque plainte compte pour que l'instruction aboutisse.</p>
+                            
+                            <div className="form-group">
+                                <input 
+                                    type="text" 
+                                    placeholder="Ton nom"
+                                    value={plainte.nom}
+                                    onChange={e => setPlainte({...plainte, nom: e.target.value})}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <input 
+                                    type="email" 
+                                    placeholder="Ton email"
+                                    value={plainte.email}
+                                    onChange={e => setPlainte({...plainte, email: e.target.value})}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label style={{marginBottom: '0.8rem', display: 'block'}}>Motifs:</label>
+                                {motifsPossibles.map((m, i) => (
+                                    <div className="checkbox-group" key={i}>
+                                        <input 
+                                            type="checkbox"
+                                            id={`motif-${i}`}
+                                            checked={plainte.motifs.includes(m)}
+                                            onChange={e => {
+                                                if (e.target.checked) {
+                                                    setPlainte({...plainte, motifs: [...plainte.motifs, m]});
+                                                } else {
+                                                    setPlainte({...plainte, motifs: plainte.motifs.filter(x => x !== m)});
+                                                }
+                                            }}
+                                        />
+                                        <label htmlFor={`motif-${i}`}>{m}</label>
+                                    </div>
+                                ))}
+                            </div>
+                            <button className="btn" onClick={generatePlainte}>
+                                Générer ma plainte
+                            </button>
+                        </div>
+                        
+                        <div className="action-card">
+                            <h3>📢 Partager les faits</h3>
+                            <p>Contre-narratif: les vrais chiffres contre les clichés.</p>
+                            <div style={{marginTop: '1rem'}}>
+                                <button 
+                                    className="btn btn-outline" 
+                                    style={{marginBottom: '0.5rem', width: '100%'}}
+                                    onClick={() => {
+                                        const text = `Documentaire Deborsu "Tous fraudeurs" :\n\n❌ Impression de fraude généralisée\n✅ Réalité : <3% de fraude\n\n❌ 410.000 téléspectateurs manipulés\n✅ 400+ plaintes au CSA\n\nLe timing ? 3 semaines après le vote Arizona.\n\n#Deborsu #Arizona #CPAS`;
+                                        navigator.clipboard.writeText(text);
+                                        alert('Texte copié !');
+                                    }}
+                                >
+                                    Copier texte Twitter/X
+                                </button>
+                                <button 
+                                    className="btn btn-outline" 
+                                    style={{width: '100%'}}
+                                    onClick={() => {
+                                        const text = `📺 410.860 personnes ont regardé le documentaire Deborsu "Tous fraudeurs"\n\n📊 Ce qu'il ne dit pas :\n- Taux de fraude réel : moins de 3%\n- Témoignages tronqués (1h d'interview → quelques phrases)\n- Timing : 3 semaines après le vote Arizona\n\n🎯 90.000 personnes seront exclues du chômage d'ici 2030\n\nCoïncidence ?`;
+                                        navigator.clipboard.writeText(text);
+                                        alert('Texte copié !');
+                                    }}
+                                >
+                                    Copier texte LinkedIn
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div className="action-card">
+                            <h3>🔗 Relayer</h3>
+                            <p>Associations, syndicats, collectifs qui se mobilisent:</p>
+                            <ul style={{listStyle: 'none', marginTop: '1rem'}}>
+                                <li style={{marginBottom: '0.5rem'}}>→ <a href="https://rwlp.be" target="_blank" style={{color: 'var(--red)'}}>RWLP (Réseau Wallon Lutte Pauvreté)</a></li>
+                                <li style={{marginBottom: '0.5rem'}}>→ <a href="https://atd-quartmonde.be" target="_blank" style={{color: 'var(--red)'}}>ATD Quart Monde Belgique</a></li>
+                                <li style={{marginBottom: '0.5rem'}}>→ <a href="https://fgtb.be" target="_blank" style={{color: 'var(--red)'}}>FGTB</a></li>
+                                <li style={{marginBottom: '0.5rem'}}>→ <a href="https://csc-en-ligne.be" target="_blank" style={{color: 'var(--red)'}}>CSC</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div className="action-card">
+                            <h3>📍 IRL</h3>
+                            <p>Actions terrain suggérées:</p>
+                            <ul style={{listStyle: 'none', marginTop: '1rem', color: 'var(--grey-light)'}}>
+                                <li style={{marginBottom: '0.5rem'}}>• Affiches avec QR code vers ce site</li>
+                                <li style={{marginBottom: '0.5rem'}}>• Distribution tracts CPAS / Forem</li>
+                                <li style={{marginBottom: '0.5rem'}}>• Interpellation conseils communaux</li>
+                                <li style={{marginBottom: '0.5rem'}}>• Questions aux parlementaires</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+        
+        // App principale
+        function App() {
+            const [activeTab, setActiveTab] = useState('simulator');
+            
+            const tabs = [
+                { id: 'simulator', label: '01_SIMULATEUR' },
+                { id: 'decryptage', label: '02_DÉCRYPTAGE' },
+                { id: 'timeline', label: '03_TIMELINE' },
+                { id: 'action', label: '04_ACTION' }
+            ];
+            
+            return (
+                <div>
+                    <div className="warning-banner">
+                        <strong>Réformes Arizona</strong> — 90.000 exclusions prévues d'ici 2030. Ce n'est pas de la fiction.
+                    </div>
+                    
+                    <div className="container">
+                        <header className="header">
+                            <h1>ARIZONA <span className="red">2027</span></h1>
+                            <p className="tagline">
+                                Tu survis ? — Simulateur basé sur les vrais chiffres, les vraies règles, les vrais pièges.
+                            </p>
+                        </header>
+                        
+                        <nav className="tabs">
+                            {tabs.map(tab => (
+                                <button 
+                                    key={tab.id}
+                                    className={`tab ${activeTab === tab.id ? 'active' : ''}`}
+                                    onClick={() => setActiveTab(tab.id)}
+                                >
+                                    {tab.label}
+                                </button>
+                            ))}
+                        </nav>
+                        
+                        <main>
+                            {activeTab === 'simulator' && <Simulator />}
+                            {activeTab === 'decryptage' && <Decryptage />}
+                            {activeTab === 'timeline' && <Timeline />}
+                            {activeTab === 'action' && <Action />}
+                        </main>
+                        
+                        <footer className="footer">
+                            <p>
+                                Données: SPF Sécurité sociale, INAMI, ONEM, CSA, RTL-TVI, témoignages publics.<br/>
+                                <a href="https://ouaisfieu.be">ouaisfieu.be</a> — Contre-information citoyenne — CC BY-NC-SA
+                            </p>
+                            <p style={{marginTop: '1rem', fontSize: '0.75rem'}}>
+                                Ce simulateur utilise des estimations basées sur les règles annoncées. 
+                                Les situations individuelles peuvent varier.
+                            </p>
+                        </footer>
+                    </div>
+                </div>
+            );
+        }
+        
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
