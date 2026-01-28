@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ouaisfieu — Espace Presse | Veille Citoyenne Belge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --noir: #0a0a0a;
+            --blanc: #fafafa;
+            --gris-chaud: #f5f3f0;
+            --gris-texte: #3d3d3d;
+            --accent: #c41e3a;
+            --accent-hover: #a01830;
+            --jaune-belge: #fcd116;
+            --ombre: 0 4px 30px rgba(0,0,0,0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--blanc);
+            color: var(--noir);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* HEADER - Style journal */
+        header {
+            background: var(--noir);
+            color: var(--blanc);
+            padding: 12px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .logo span {
+            color: var(--jaune-belge);
+        }
+
+        .header-badge {
+            background: var(--accent);
+            color: white;
+            padding: 6px 16px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* HERO - Style éditorial */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 120px 24px 80px;
+            background: linear-gradient(135deg, var(--gris-chaud) 0%, var(--blanc) 100%);
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                repeating-linear-gradient(0deg, transparent, transparent 50px, rgba(0,0,0,0.02) 50px, rgba(0,0,0,0.02) 51px),
+                repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(0,0,0,0.02) 50px, rgba(0,0,0,0.02) 51px);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-date {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--accent);
+            margin-bottom: 24px;
+            font-weight: 600;
+        }
+
+        .hero h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 32px;
+            letter-spacing: -0.02em;
+        }
+
+        .hero h1 em {
+            font-style: italic;
+            color: var(--accent);
+        }
+
+        .hero-lead {
+            font-size: 1.25rem;
+            color: var(--gris-texte);
+            max-width: 680px;
+            margin-bottom: 40px;
+            line-height: 1.8;
+        }
+
+        .hero-lead strong {
+            color: var(--noir);
+            font-weight: 600;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 32px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--noir);
+            color: var(--blanc);
+        }
+
+        .btn-primary:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: var(--ombre);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--noir);
+            border: 2px solid var(--noir);
+        }
+
+        .btn-secondary:hover {
+            background: var(--noir);
+            color: var(--blanc);
+        }
+
+        /* SECTION COMMUNE */
+        section {
+            padding: 100px 24px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 48px;
+            letter-spacing: -0.02em;
+        }
+
+        /* EN BREF - Les 5W */
+        .en-bref {
+            background: var(--noir);
+            color: var(--blanc);
+        }
+
+        .en-bref .section-label {
+            color: var(--jaune-belge);
+        }
+
+        .bref-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+        }
+
+        .bref-item {
+            border-left: 3px solid var(--accent);
+            padding-left: 24px;
+        }
+
+        .bref-item h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--jaune-belge);
+        }
+
+        .bref-item p {
+            color: rgba(255,255,255,0.85);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* CHIFFRES CLÉS */
+        .chiffres {
+            background: var(--gris-chaud);
+        }
+
+        .chiffres-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 32px;
+        }
+
+        @media (max-width: 900px) {
+            .chiffres-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 500px) {
+            .chiffres-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chiffre-card {
+            text-align: center;
+            padding: 40px 24px;
+            background: var(--blanc);
+            box-shadow: var(--ombre);
+            transition: transform 0.3s ease;
+        }
+
+        .chiffre-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .chiffre-number {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .chiffre-label {
+            font-size: 0.85rem;
+            color: var(--gris-texte);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* TROIS PILIERS */
+        .piliers {
+            background: var(--blanc);
+        }
+
+        .piliers-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 48px;
+        }
+
+        @media (max-width: 800px) {
+            .piliers-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .pilier {
+            position: relative;
+        }
+
+        .pilier-numero {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 6rem;
+            font-weight: 700;
+            color: var(--gris-chaud);
+            line-height: 1;
+            position: absolute;
+            top: -20px;
+            left: -10px;
+            z-index: 0;
+        }
+
+        .pilier-content {
+            position: relative;
+            z-index: 1;
+            padding-top: 40px;
+        }
+
+        .pilier h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--noir);
+        }
+
+        .pilier p {
+            color: var(--gris-texte);
+            font-size: 0.95rem;
+        }
+
+        .pilier-tag {
+            display: inline-block;
+            margin-top: 16px;
+            padding: 6px 14px;
+            background: var(--accent);
+            color: white;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 600;
+        }
+
+        /* ÉCOSYSTÈME */
+        .ecosysteme {
+            background: linear-gradient(180deg, var(--blanc) 0%, var(--gris-chaud) 100%);
+        }
+
+        .eco-intro {
+            max-width: 700px;
+            margin-bottom: 60px;
+            font-size: 1.1rem;
+            color: var(--gris-texte);
+        }
+
+        .eco-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+        }
+
+        .eco-card {
+            background: var(--blanc);
+            padding: 28px;
+            border: 1px solid rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .eco-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .eco-card:hover {
+            box-shadow: var(--ombre);
+            transform: translateY(-2px);
+        }
+
+        .eco-card:hover::before {
+            transform: scaleY(1);
+        }
+
+        .eco-card h4 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .eco-card p {
+            font-size: 0.85rem;
+            color: var(--gris-texte);
+        }
+
+        .eco-card .eco-url {
+            display: block;
+            margin-top: 12px;
+            font-size: 0.75rem;
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        /* KIT PRESSE */
+        .kit-presse {
+            background: var(--noir);
+            color: var(--blanc);
+            text-align: center;
+        }
+
+        .kit-presse .section-label {
+            color: var(--jaune-belge);
+        }
+
+        .kit-presse .section-title {
+            color: var(--blanc);
+        }
+
+        .kit-intro {
+            max-width: 600px;
+            margin: 0 auto 48px;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .kit-items {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-bottom: 48px;
+        }
+
+        .kit-item {
+            background: rgba(255,255,255,0.05);
+            padding: 32px 40px;
+            min-width: 200px;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .kit-item:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: var(--jaune-belge);
+            transform: translateY(-4px);
+        }
+
+        .kit-icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+
+        .kit-item h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .kit-item p {
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .kit-download {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--accent);
+            color: white;
+            padding: 18px 40px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .kit-download:hover {
+            background: var(--accent-hover);
+            transform: scale(1.02);
+        }
+
+        /* CONTACT PRESSE */
+        .contact {
+            background: var(--blanc);
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: start;
+        }
+
+        @media (max-width: 800px) {
+            .contact-grid {
+                grid-template-columns: 1fr;
+                gap: 48px;
+            }
+        }
+
+        .contact-info h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        .contact-details {
+            margin-bottom: 32px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .contact-icon {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+            color: var(--accent);
+        }
+
+        .contact-item strong {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--noir);
+        }
+
+        .contact-item span,
+        .contact-item a {
+            color: var(--gris-texte);
+            text-decoration: none;
+        }
+
+        .contact-item a:hover {
+            color: var(--accent);
+        }
+
+        .contact-social {
+            display: flex;
+            gap: 12px;
+        }
+
+        .social-link {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gris-chaud);
+            color: var(--noir);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        .contact-aside {
+            background: var(--gris-chaud);
+            padding: 40px;
+        }
+
+        .contact-aside h4 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .contact-aside p {
+            font-size: 0.9rem;
+            color: var(--gris-texte);
+            margin-bottom: 20px;
+        }
+
+        .contact-aside ul {
+            list-style: none;
+            font-size: 0.85rem;
+            color: var(--gris-texte);
+        }
+
+        .contact-aside li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .contact-aside li::before {
+            content: '→';
+            color: var(--accent);
+        }
+
+        /* FOOTER */
+        footer {
+            background: var(--noir);
+            color: rgba(255,255,255,0.6);
+            padding: 48px 24px;
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--blanc);
+            margin-bottom: 16px;
+        }
+
+        .footer-logo span {
+            color: var(--jaune-belge);
+        }
+
+        .footer-tagline {
+            font-style: italic;
+            margin-bottom: 24px;
+            font-size: 0.95rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--jaune-belge);
+        }
+
+        .footer-copy {
+            font-size: 0.75rem;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-content > * {
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .hero-date { animation-delay: 0.1s; }
+        .hero h1 { animation-delay: 0.2s; }
+        .hero-lead { animation-delay: 0.3s; }
+        .hero-cta { animation-delay: 0.4s; }
+
+        /* Quote */
+        .citation {
+            background: var(--gris-chaud);
+            padding: 80px 24px;
+            text-align: center;
+        }
+
+        .citation blockquote {
+            max-width: 800px;
+            margin: 0 auto;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(1.5rem, 3vw, 2.2rem);
+            font-style: italic;
+            line-height: 1.5;
+            color: var(--noir);
+        }
+
+        .citation blockquote::before {
+            content: '«';
+            display: block;
+            font-size: 4rem;
+            color: var(--accent);
+            line-height: 1;
+            margin-bottom: 16px;
+        }
+
+        .citation cite {
+            display: block;
+            margin-top: 24px;
+            font-style: normal;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.9rem;
+            color: var(--gris-texte);
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="header-inner">
+            <div class="logo">ouaisfi<span>·</span>eu</div>
+            <div class="header-badge">Espace Presse</div>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-content">
+            <p class="hero-date">Communiqué de Presse — Janvier 2026</p>
+            <h1>La veille citoyenne belge <em>réinventée</em> à l'ère numérique</h1>
+            <p class="hero-lead">
+                <strong>Ouaisfieu</strong> est une initiative citoyenne indépendante qui outille les Belges 
+                pour comprendre et agir sur leur système politique. Un écosystème numérique gratuit, 
+                sans publicité, sans traçage — construit par des citoyens, pour les citoyens.
+            </p>
+            <div class="hero-cta">
+                <a href="#kit-presse" class="btn btn-primary">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    Télécharger le kit presse
+                </a>
+                <a href="#contact" class="btn btn-secondary">Contact presse</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- EN BREF -->
+    <section class="en-bref">
+        <div class="container">
+            <p class="section-label">En bref</p>
+            <h2 class="section-title" style="color: white;">L'essentiel en 5 points</h2>
+            <div class="bref-grid">
+                <div class="bref-item">
+                    <h3>Qui ?</h3>
+                    <p>Un collectif citoyen belge indépendant, porté par le CCPLC (Collectif Citoyen pour la Participation Libre & Consciente), sans affiliation politique ni structure commerciale.</p>
+                </div>
+                <div class="bref-item">
+                    <h3>Quoi ?</h3>
+                    <p>Un écosystème numérique de veille citoyenne : analyses politiques, données ouvertes, outils d'investigation et formations à l'OSINT, le tout 100% gratuit et open source.</p>
+                </div>
+                <div class="bref-item">
+                    <h3>Pourquoi ?</h3>
+                    <p>Parce que comprendre le système politique belge — particratie, compromis, fédéralisme — ne devrait pas être réservé aux initiés. Ouaisfieu démocratise l'analyse critique.</p>
+                </div>
+                <div class="bref-item">
+                    <h3>Pour qui ?</h3>
+                    <p>Tous les citoyens belges, journalistes, chercheurs, étudiants ou simples curieux qui veulent dépasser le bruit médiatique pour comprendre les mécanismes du pouvoir.</p>
+                </div>
+                <div class="bref-item">
+                    <h3>Comment ?</h3>
+                    <p>Hébergé gratuitement sur GitHub Pages, alimenté par l'IA et la recherche documentaire, avec une transparence totale sur les méthodes et les sources.</p>
+                </div>
+                <div class="bref-item">
+                    <h3>Quand ?</h3>
+                    <p>Lancé en 2025, le projet vise la reconnaissance officielle comme association d'éducation permanente en Fédération Wallonie-Bruxelles avant mars 2026.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CHIFFRES -->
+    <section class="chiffres">
+        <div class="container">
+            <p class="section-label">Chiffres clés</p>
+            <h2 class="section-title">L'écosystème en quelques chiffres</h2>
+            <div class="chiffres-grid">
+                <div class="chiffre-card">
+                    <div class="chiffre-number">0€</div>
+                    <div class="chiffre-label">Budget publicité</div>
+                </div>
+                <div class="chiffre-card">
+                    <div class="chiffre-number">6+</div>
+                    <div class="chiffre-label">Plateformes actives</div>
+                </div>
+                <div class="chiffre-card">
+                    <div class="chiffre-number">100%</div>
+                    <div class="chiffre-label">Open source</div>
+                </div>
+                <div class="chiffre-card">
+                    <div class="chiffre-number">0</div>
+                    <div class="chiffre-label">Traceurs / Cookies</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TROIS PILIERS -->
+    <section class="piliers">
+        <div class="container">
+            <p class="section-label">Notre mission</p>
+            <h2 class="section-title">Trois piliers fondateurs</h2>
+            <div class="piliers-grid">
+                <div class="pilier">
+                    <div class="pilier-numero">01</div>
+                    <div class="pilier-content">
+                        <h3>Analyse politique belge</h3>
+                        <p>Décrypter le fonctionnement opaque de la politique en Belgique : particratie, « compromis à la belge », fédéralisme asymétrique. Des dossiers documentés pour comprendre les mécanismes du pouvoir.</p>
+                        <span class="pilier-tag">Dossiers thématiques</span>
+                    </div>
+                </div>
+                <div class="pilier">
+                    <div class="pilier-numero">02</div>
+                    <div class="pilier-content">
+                        <h3>Éducation permanente</h3>
+                        <p>Donner à chaque citoyen les clés de lecture pour devenir acteur de la vie démocratique. Formations OSINT, tutoriels d'hygiène numérique, ateliers participatifs.</p>
+                        <span class="pilier-tag">Objectif FWB 2026</span>
+                    </div>
+                </div>
+                <div class="pilier">
+                    <div class="pilier-numero">03</div>
+                    <div class="pilier-content">
+                        <h3>Transparence numérique</h3>
+                        <p>Un engagement radical pour un web ouvert, éthique et respectueux. Ni pistage, ni publicité, code source accessible. Une prise de position politique autant que technique.</p>
+                        <span class="pilier-tag">Code ouvert</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CITATION -->
+    <section class="citation">
+        <blockquote>
+            La démocratie ne peut fonctionner que si les citoyens ont accès aux outils pour comprendre comment les décisions sont prises en leur nom.
+            <cite>— Manifeste Ouaisfieu</cite>
+        </blockquote>
+    </section>
+
+    <!-- ÉCOSYSTÈME -->
+    <section class="ecosysteme">
+        <div class="container">
+            <p class="section-label">L'écosystème</p>
+            <h2 class="section-title">Plusieurs portes d'entrée, une même mission</h2>
+            <p class="eco-intro">Ouaisfieu n'est pas un site unique, mais un réseau de plateformes spécialisées qui travaillent ensemble. Chacune offre une manière différente d'explorer les enjeux citoyens.</p>
+            <div class="eco-grid">
+                <div class="eco-card">
+                    <h4>ouaisfi·eu</h4>
+                    <p>Le portail principal qui centralise toutes les ressources et présente la philosophie du projet.</p>
+                    <span class="eco-url">ouaisfi.eu</span>
+                </div>
+                <div class="eco-card">
+                    <h4>DOCTech</h4>
+                    <p>« Document d'Ordre Citoyen et Technique » — La boîte à outils pour comprendre la Belgique.</p>
+                    <span class="eco-url">ouaisfieu.github.io/tech/</span>
+                </div>
+                <div class="eco-card">
+                    <h4>BXL2030</h4>
+                    <p>Analyses prospectives des grands enjeux bruxellois : dette, crises, scénarios futurs.</p>
+                    <span class="eco-url">ouaisfieu.github.io/bxl2030/</span>
+                </div>
+                <div class="eco-card">
+                    <h4>11·60 bis</h4>
+                    <p>Dossiers d'actualité approfondis, avec un ancrage local (Auderghem et au-delà).</p>
+                    <span class="eco-url">dl.ouaisfi.eu/1160/</span>
+                </div>
+                <div class="eco-card">
+                    <h4>CCPLC</h4>
+                    <p>Le Collectif Citoyen pour la Participation Libre & Consciente — le bras humain du projet.</p>
+                    <span class="eco-url">ouaisfieu.github.io/tech/ccplc/</span>
+                </div>
+                <div class="eco-card">
+                    <h4>Archives & Data</h4>
+                    <p>Serveur de fichiers : PDFs, datasets, données brutes pour la recherche citoyenne.</p>
+                    <span class="eco-url">dl.ouaisfi.eu</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- KIT PRESSE -->
+    <section class="kit-presse" id="kit-presse">
+        <div class="container">
+            <p class="section-label">Ressources médias</p>
+            <h2 class="section-title">Kit Presse</h2>
+            <p class="kit-intro">Tous les éléments pour couvrir le projet : communiqué officiel, dossier complet, fiche synthétique.</p>
+            <div class="kit-items">
+                <a href="kit-presse-ouaisfieu/Ouaisfieu_Communique_Presse.pdf" class="kit-item" target="_blank">
+                    <div class="kit-icon">📋</div>
+                    <h4>Communiqué de presse</h4>
+                    <p>2 pages • PDF</p>
+                </a>
+                <a href="kit-presse-ouaisfieu/Ouaisfieu_Dossier_Presse.pdf" class="kit-item" target="_blank">
+                    <div class="kit-icon">📖</div>
+                    <h4>Dossier de presse</h4>
+                    <p>12 pages • PDF</p>
+                </a>
+                <a href="kit-presse-ouaisfieu/Ouaisfieu_Fiche_Projet.pdf" class="kit-item" target="_blank">
+                    <div class="kit-icon">📊</div>
+                    <h4>Fiche projet</h4>
+                    <p>1 page • PDF</p>
+                </a>
+            </div>
+            <p style="margin-top: 32px; color: rgba(255,255,255,0.6); font-size: 0.85rem;">
+                Besoin de logos ou visuels supplémentaires ? Contactez-nous.
+            </p>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="contact" id="contact">
+        <div class="container">
+            <p class="section-label">Contact</p>
+            <h2 class="section-title">Espace Presse</h2>
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <h3>Pour toute demande média</h3>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <svg class="contact-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                            <div>
+                                <strong>Email presse</strong>
+                                <a href="/cdn-cgi/l/email-protection#b4c7dbc1d5d09ad1d2d2d1dff4dbc1d5ddc7d2dd9ad1c1"><span class="__cf_email__" data-cfemail="c1b2aeb4a0a5efa4a7a7a4aa81aeb4a0a8b2a7a8efa4b4">[email&#160;protected]</span></a>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <svg class="contact-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                            <div>
+                                <strong>Localisation</strong>
+                                <span>Bruxelles, Belgique</span>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <svg class="contact-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                            <div>
+                                <strong>Site principal</strong>
+                                <a href="https://ouaisfi.eu" target="_blank">ouaisfi.eu</a>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="margin-bottom: 16px; color: var(--gris-texte); font-size: 0.9rem;">Suivez-nous :</p>
+                    <div class="contact-social">
+                        <a href="https://bsky.app/profile/ouaisfi.eu" target="_blank" class="social-link" title="Bluesky">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.25c-1.66 2.64-5.02 7.06-7.13 8.8-2.52 2.07-2.9 4.08-.3 6.28.65.55 2.73.48 3.9-.78 1.18-1.27 1.35-2.35 1.53-3.05.3-1.18.38-.9.38.13 0 1.93-.62 4.65 1.62 5.13 1.5.32 3.27-1.08 3.96-1.93.69.85 2.46 2.25 3.96 1.93 2.24-.48 1.62-3.2 1.62-5.13 0-1.03.08-1.31.38-.13.18.7.35 1.78 1.53 3.05 1.17 1.26 3.25 1.33 3.9.78 2.6-2.2 2.22-4.21-.3-6.28C20.02 9.31 16.66 4.89 15 2.25c-1.44 2.29-2.85 4.48-3 4.7-.15-.22-1.56-2.41-3-4.7z"/></svg>
+                        </a>
+                        <a href="https://github.com/ouaisfieu" target="_blank" class="social-link" title="GitHub">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="contact-aside">
+                    <h4>Angles éditoriaux suggérés</h4>
+                    <p>Quelques pistes pour vos articles :</p>
+                    <ul>
+                        <li>Civic tech : la Belgique à la traîne ?</li>
+                        <li>Éducation permanente à l'ère de l'IA</li>
+                        <li>Open source et démocratie participative</li>
+                        <li>Bruxelles 2030 : les citoyens font leur prospective</li>
+                        <li>OSINT citoyen : quand les Belges enquêtent</li>
+                        <li>Zéro budget, impact maximal : le modèle ouaisfieu</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-logo">ouaisfi<span>·</span>eu</div>
+        <p class="footer-tagline">« Ouais fieu, on peut faire mieux. »</p>
+        <div class="footer-links">
+            <a href="https://ouaisfi.eu" target="_blank">Site principal</a>
+            <a href="https://ouaisfieu.github.io/tech/" target="_blank">DOCTech</a>
+            <a href="https://github.com/ouaisfieu" target="_blank">GitHub</a>
+            <a href="https://bsky.app/profile/ouaisfi.eu" target="_blank">Bluesky</a>
+        </div>
+        <p class="footer-copy">
+            © 2025-2026 Ouaisfieu — Veille Citoyenne Belge<br>
+            Contenus sous licence Creative Commons • Code source ouvert
+        </p>
+    </footer>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        // Smooth reveal on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.bref-item, .chiffre-card, .pil
